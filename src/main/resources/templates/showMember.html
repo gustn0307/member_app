@@ -59,7 +59,7 @@
         <input type="submit" value="신규 회원 입력">
     </form>
     <br>
-    <form action="">
+    <form th:action="@{search}" method="get">
         <select name = "type">
             <option value="">검색 조건 선택</option>
             <option value="name">이름</option>

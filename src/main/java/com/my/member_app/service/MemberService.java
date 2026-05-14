@@ -33,7 +33,6 @@ public class MemberService {
     public List<MemberDto> findAll() {
         List<Member> memberList = memberRepository.findAll(); // Repository에서 필요한 정보를 가져온다.
 
-
         // memberList의 Member Entity들을 각각 MemberDto로 변환해 memberDtoList에 담는다.
 
         // 1. for-each 방식으로 수행
@@ -55,7 +54,6 @@ public class MemberService {
 
     }
 
-
     public void insert(MemberDto dto) {
         // DTO -> Member Entity 변환해서 DB에 저장
         // memberRepository.save()의 인자는 Entity
@@ -69,10 +67,30 @@ public class MemberService {
     public MemberDto findById(Long updateId) {
         Optional<Member> member = memberRepository.findById(updateId);
 
-        if (member.isPresent()){
+        if (member.isPresent()) {
             return MemberDto.toDto(member.get());
-        }else {
+        } else {
             return null;
         }
+    }
+
+    // 검색
+    // type : 이름 or 주소, keyword : 검색어
+    public List<MemberDto> search(String type, String keyword) {
+        List<Member> searchList = new ArrayList<>();
+        switch (type) {
+            case "name":
+                searchList = memberRepository.searchByName(keyword);
+                break;
+            case "address":
+                searchList = memberRepository.searchByAddress(keyword);
+                break;
+            default: // type 선택하지 않은 경우
+                searchList = memberRepository.findAll();
+        }
+        return searchList
+                .stream()
+                .map(MemberDto::toDto)
+                .toList();
     }
 }

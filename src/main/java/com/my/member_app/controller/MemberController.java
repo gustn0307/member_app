@@ -1,6 +1,7 @@
 package com.my.member_app.controller;
 
 import com.my.member_app.dto.MemberDto;
+import com.my.member_app.dto.SearchDto;
 import com.my.member_app.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,5 +101,21 @@ public class MemberController {
         // 3. 메시지 보내기
         redirectAttributes.addFlashAttribute("message", "정상적으로 수정되었습니다.");
         return "redirect:view";
+    }
+
+    @GetMapping("search")
+    public String search(SearchDto searchDto,
+                         Model model){
+        // 1. showMember.html에서 type과 keyword를 담은 DTO가 정상적으로 넘어오는지 확인
+        // DTO를 만들어두면 스프링이 자동으로 두 변수를 가진 DTO를 만들어서 보내준다.
+        log.info("searchDto : "+searchDto);
+
+        // 2. 서비스에서 검색 결과 받아오기
+        List<MemberDto> result = memberService.search(searchDto.getType(),searchDto.getKeyword());
+
+        // 3. 모델로 전달
+        model.addAttribute("lists", result);
+
+        return "showMember";
     }
 }
