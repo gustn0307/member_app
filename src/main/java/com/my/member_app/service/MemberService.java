@@ -65,4 +65,14 @@ public class MemberService {
     public void delete(Long deleteId) {
         memberRepository.deleteById(deleteId);
     }
+
+    public MemberDto findById(Long updateId) {
+        Optional<Member> member = memberRepository.findById(updateId);
+
+        if (member.isPresent()){
+            return MemberDto.toDto(member.get());
+        }else {
+            return null;
+        }
+    }
 }
