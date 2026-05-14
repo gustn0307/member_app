@@ -21,6 +21,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
+    <!-- table 태그의 border, cellpadding, cellspacing 속성 등은 HTML5에서 더 이상 사용하지 않아 CSS로 정의해야 함    -->
     <table>
         <thead>
             <tr>
@@ -39,7 +40,8 @@
                 <td th:text = "*{age}">20</td>
                 <td th:text = "*{address}">서울</td>
                 <td>
-                    <form action="">
+                    <form th:action="@{update}" method="get">
+                        <input type="hidden" name="updateId" th:value = "*{id}">
                         <input type="submit" value="수정">
                     </form>
                 </td>

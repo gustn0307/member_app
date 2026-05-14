@@ -50,7 +50,7 @@ public class MemberController {
 
         // "redirect:view" : "view"를 GET 방식으로 다시 호출
         // RequestMapping("member") 로 인해 "redirect:view" 또는 "redirect:/member/view"로 적는다
-        // RequestMapping()의 인자를 뺀 값만 적든지 아예 전체 경로를 적어야 함
+        // '/'로 시작하면 절대 경로(Context Root), 그렇지 않으면 상대 경로(현재 RequestMapping 기준)
         return "redirect:view";
     }
 
@@ -63,6 +63,42 @@ public class MemberController {
         memberService.delete(deleteId);
 
         redirectAttributes.addFlashAttribute("message", "정상적으로 삭제되었습니다.");
+        return "redirect:view";
+    }
+
+    @GetMapping("update")
+    public String updateForm(@RequestParam("updateId") Long updateId,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
+        // 1. 선택한 ID를 가져오는지 확인
+        log.info("@@@@@@@@@@@@@ updateId = " + updateId);
+
+        // 2. 해당 ID를 검색해서 dto 받아온다.
+        MemberDto updateDto = memberService.findById(updateId);
+        log.info("updateDto : " + updateDto);
+
+        // 3. updateDto 비어있는지 확인 후 비어있으면 member/view로 보낸다
+        if (updateDto==null){
+            redirectAttributes.addFlashAttribute("message", "선택한 회원을 찾을 수 없습니다.");
+            return "redirect:view";
+        }else {
+            // 4. 모델에 담아서 updateMember의 Form에 보낸다
+            model.addAttribute("dto", updateDto);
+            return "updateMember";
+        }
+    }
+
+    @PostMapping("update")
+    public String updateMember(@ModelAttribute("dto") MemberDto dto,
+                               RedirectAttributes redirectAttributes){
+        // 1. 선택한 DTO를 가져오는지 확인
+        log.info("updateMember() updateDto : " + dto);
+
+        // 2. 제대로 가져왔는지 확인 후 수정된 DTO를 DB에 반영(UPDATE)
+        memberService.insert(dto);
+
+        // 3. 메시지 보내기
+        redirectAttributes.addFlashAttribute("message", "정상적으로 수정되었습니다.");
         return "redirect:view";
     }
 }
