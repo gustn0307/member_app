@@ -46,5 +46,4 @@ public class MemberDto {
                 member.getAddress()
                 );
     }
-
 }
