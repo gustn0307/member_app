@@ -32,13 +32,37 @@ public class MemberService {
 
     public List<MemberDto> findAll() {
         List<Member> memberList = memberRepository.findAll(); // Repository에서 필요한 정보를 가져온다.
-        List<MemberDto> memberDtoList = new ArrayList<>(); // 변환한 DTO를 담을 리스트
+
 
         // memberList의 Member Entity들을 각각 MemberDto로 변환해 memberDtoList에 담는다.
-        for (Member member: memberList){
-            memberDtoList.add(MemberDto.toDto(member)); // static 메서드이므로 클래스이름으로 접근
-        }
 
-        return memberDtoList;
+        // 1. for-each 방식으로 수행
+        List<MemberDto> memberDtoList = new ArrayList<>(); // 변환한 DTO를 담을 리스트
+//        for (Member member: memberList){
+//            memberDtoList.add(MemberDto.toDto(member)); // static 메서드이므로 클래스이름으로 접근
+//        }
+//        return memberDtoList;
+
+        // 2. stream, 람다 표현식('::')을 이용해 수행(Java 8부터 사용 가능)
+        //  '::' : 메서드 레퍼런스(Method Reference)
+        // => 람다 표현식이 단 하나의 메서드만을 호출할 때, 불필요한 매개변수를 생략하고
+        //       기존 메서드를 직접 참조하여 코드를 더 간결하고 가독성있게 만드는 기능
+        //       람다식 (a, b) -> Obj.method(a, b)를 Obj::method 형태로 쓴다.
+        return memberList
+                .stream()
+                .map(MemberDto::toDto)
+                .toList();
+
+    }
+
+
+    public void insert(MemberDto dto) {
+        // DTO -> Member Entity 변환해서 DB에 저장
+        // memberRepository.save()의 인자는 Entity
+        memberRepository.save(MemberDto.toEntity(dto));
+    }
+
+    public void delete(Long deleteId) {
+        memberRepository.deleteById(deleteId);
     }
 }
